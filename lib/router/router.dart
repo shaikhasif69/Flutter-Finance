@@ -1,7 +1,9 @@
 import 'package:flutter_finance/Screens/On_Board/on_boarding.dart';
 import 'package:flutter_finance/Screens/Personal_Info/personal_info.dart';
+import 'package:flutter_finance/Screens/add_new_investment.dart';
 import 'package:flutter_finance/Screens/ask_loginPage.dart';
 import 'package:flutter_finance/Screens/home_screen.dart';
+import 'package:flutter_finance/Screens/investment_page.dart';
 import 'package:flutter_finance/Screens/login_screen.dart';
 import 'package:flutter_finance/Screens/signup.dart';
 import 'package:flutter_finance/Screens/splash_screen.dart';
@@ -58,6 +60,11 @@ class MyGoRouter {
       path: UserRoutes.homeScreen,
       name: UserRoutes.homeScreen,
       builder: (context, state) => HomeScreen(),
+    ),
+    GoRoute(
+      path: UserRoutes.addNewInvestment,
+      name: UserRoutes.addNewInvestment,
+      builder: (context, state) => AddNewInvestment(),
     ),
   ]);
 }

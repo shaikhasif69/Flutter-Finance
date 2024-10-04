@@ -80,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               InputTextContainer(
                 con: _emailController,
-                label: "College ID",
+                label: "Email",
               ),
               const SizedBox(height: 10),
               InputTextContainer(

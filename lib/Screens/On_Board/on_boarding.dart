@@ -56,7 +56,6 @@ class _on_boardingState extends State<on_boarding> {
                 activeDotColor: Color.fromARGB(255, 157, 0, 255)),
           ),
         ),
-         
         Container(
           alignment: Alignment(-0.6, 0.75),
           child: Row(
@@ -74,7 +73,8 @@ class _on_boardingState extends State<on_boarding> {
                   ? GestureDetector(
                       onTap: () {
                         print("hello");
-                        GoRouter.of(context).pushReplacement(UserRoutes.askLoginScreen);
+                        GoRouter.of(context)
+                            .pushReplacement(UserRoutes.askLoginScreen);
                         // GoRouter.of(context).pushReplacement(UserRoutes.personalInfo);
                         // GoRouter.of(context).goNamed(UserRoutes.login);
                         //      showCustomDialog(
@@ -133,7 +133,6 @@ class _on_boardingState extends State<on_boarding> {
                                     color: Colors.white,
                                     letterSpacing: 1),
                               ),
-                              
                             ],
                           ),
                         ),

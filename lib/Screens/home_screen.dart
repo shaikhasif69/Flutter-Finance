@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/Screens/dashboard_screen.dart';
+import 'package:flutter_finance/Screens/investment_page.dart';
 import 'package:flutter_finance/Screens/portfolio_page.dart';
 import 'package:flutter_finance/Screens/side_bar.dart';
 import 'package:flutter_finance/components/constant.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     DashboardScreen(),
     PortfolioPage(),
-    Container(color: Colors.white),
+    InvestmentPage(),
     Container(color: Colors.white),
     Container(color: Colors.white),
   ];
