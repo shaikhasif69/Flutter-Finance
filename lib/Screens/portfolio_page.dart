@@ -20,6 +20,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     super.initState();
     formattedDate = DateFormat('MMMM d, y').format(now);
   }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -56,99 +57,220 @@ class _PortfolioPageState extends State<PortfolioPage> {
                     topRight: Radius.circular(50),
                   ),
                 ),
-                child: Column(                
-                  children: [
-                    Text("Gross Balance"),
-                    Text("₹135 000",
-                        style: GoogleFonts.poppins(
-                            fontSize: 35,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-                    Text("YOUR investment"),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                            flex: 3,
-                            child: Container(
-                                height: screenHeight * 0.23,
-                                child: PortfolioPiechart())),
-                        const Expanded(
-                            flex: 1,
-                            child: Column(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Text("Gross Balance"),
+                      Text("₹135 000",
+                          style: GoogleFonts.poppins(
+                              fontSize: 35,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black)),
+                      Text("YOUR investment"),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                  height: screenHeight * 0.23,
+                                  child: PortfolioPiechart())),
+                          const Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.real_estate_agent,
+                                        color: Colors.yellow,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0),
+                                        child: Text(
+                                          "20%",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.inventory_2_outlined,
+                                        color: Colors.red,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0),
+                                        child: Text(
+                                          "30%",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.price_change_outlined,
+                                        color: Colors.green,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0),
+                                        child: Text(
+                                          "40%",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.currency_bitcoin,
+                                        color: Colors.blue,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10.0),
+                                        child: Text(
+                                          "10%",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ))
+                        ],
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
+                      Text(formattedDate),
+                      SizedBox(height: screenHeight * 0.02),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20.0, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.real_estate_agent,
-                                      color: Colors.yellow,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        "20%",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.inventory_2_outlined,
-                                      color: Colors.red,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        "30%",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.price_change_outlined,
-                                      color: Colors.green,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        "40%",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.currency_bitcoin,
-                                      color: Colors.blue,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        "10%",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    )
-                                  ],
+                                Icon(Icons.arrow_circle_up, size: 35),
+                                Column(
+                                  children: [Text("Stocks"), Text("TATA")],
                                 ),
                               ],
-                            ))
-                      ],
-                    ),
-          SizedBox(height: screenHeight * 0.02),
-
-                    Text(formattedDate),
-          SizedBox(height: screenHeight * 0.02),
-
-                  ],
+                            ),
+                            Text("₹2230")
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_circle_down,
+                                  size: 35,
+                                ),
+                                Column(
+                                  children: [Text("Stocks"), Text("RELIANC")],
+                                ),
+                              ],
+                            ),
+                            Text("₹2556")
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_circle_up,
+                                  size: 35,
+                                ),
+                                Column(
+                                  children: [Text("BONDS"), Text("GOLD")],
+                                ),
+                              ],
+                            ),
+                            Text("₹1675")
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
+                      Text(formattedDate),
+                      SizedBox(height: screenHeight * 0.02),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20.0, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.arrow_circle_up, size: 35),
+                                Column(
+                                  children: [Text("SALARY"), Text("Software Engineer")],
+                                ),
+                              ],
+                            ),
+                            Text("+₹142550")
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_circle_down,
+                                  size: 35,
+                                ),
+                                Column(
+                                  children: [Text("Rent"), Text("4BHK")],
+                                ),
+                              ],
+                            ),
+                            Text("-₹35550")
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_circle_up,
+                                  size: 35,
+                                ),
+                                Column(
+                                  children: [Text("Stocks"), Text("TATA")],
+                                ),
+                              ],
+                            ),
+                            Text("data")
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 )),
           ),
         ],

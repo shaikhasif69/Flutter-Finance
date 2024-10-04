@@ -42,7 +42,8 @@ class _SignUpPageState extends State<SignUpPage> {
         SnackBar(content: Text('Sign-up successful!')),
       );
 
-      GoRouter.of(context).pushNamed(UserRoutes.personalInfo);
+      // GoRouter.of(context).pushNamed(UserRoutes.personalInfo);
+      GoRouter.of(context).pushReplacement(UserRoutes.homeScreen);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result['message'] ?? 'Sign-up failed')),
@@ -80,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               InputTextContainer(
                 con: _emailController,
-                label: "College ID",
+                label: "Email",
               ),
               const SizedBox(height: 10),
               InputTextContainer(
@@ -118,7 +119,6 @@ class _SignUpPageState extends State<SignUpPage> {
               GestureDetector(
                 onTap: () {
                   _signup();
-                  // GoRouter.of(context).pushNamed(StudentsRoutes.studentSetup);
                 },
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.06,
