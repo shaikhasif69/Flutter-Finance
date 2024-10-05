@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finance/router/named_routes.dart';
+import 'package:go_router/go_router.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -38,7 +40,7 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             leading: Icon(Icons.update),
             title: Text('Update Profile'),
-            onTap: () => null,
+            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.personalInfo),
           ),
           ListTile(
             leading: Icon(Icons.golf_course_sharp),

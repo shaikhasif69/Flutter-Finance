@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/router/router.dart';
+import 'package:flutter_finance/services/auth_services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-void main() {
-  runApp( MyApp());
+void main()async { WidgetsFlutterBinding.ensureInitialized();
+  await AuthService.getPref();
+  runApp( ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
   MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() {
+
+    return _MyAppState();}
 }
 
 class _MyAppState extends State<MyApp> {
