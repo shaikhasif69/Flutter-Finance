@@ -17,6 +17,7 @@ class MyColors {
 
   static Color bottomNavColor = const Color(0xFFDFF7E2);
   static Color appBackGround = const Color(0xFFF1FFF3);
+  static Color newCard = const Color(0xFF3D8FEF);
 }
 
 class Constants{
