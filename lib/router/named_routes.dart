@@ -16,4 +16,5 @@ class UserRoutes {
   static String askLoginScreen = "/user/ask-login";
   static String homeScreen = "/user/home-screen";
   static String addNewInvestment = "/user/add-new-investment";
+  static String newsHomePage = "/user/news-home-page";
 }

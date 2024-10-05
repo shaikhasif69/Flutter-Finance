@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finance/router/named_routes.dart';
+import 'package:go_router/go_router.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -53,6 +55,7 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             leading: Icon(Icons.newspaper),
             title: Text('Opportunities'),
+            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.newsHomePage),
           ),
           Divider(),
           ListTile(
