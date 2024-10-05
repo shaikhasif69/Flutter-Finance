@@ -94,7 +94,7 @@ print(res.body);
   }
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {
-    try {
+    // try {
       print("Signing in with: $email");
 
       var temail = email.trim();
@@ -114,9 +114,11 @@ print(res.body);
       if (response.statusCode == 201) {
         print("Sign-in successful");
         final body = jsonDecode(response.body);
+        print(body);
         final user = body['user'];
         final token = body['token'];
-        final risk= body['riskTolarence'];
+        final risk= body['user']['riskTolerance'];
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
             await prefs.setString('riskApitite', risk);
@@ -138,13 +140,13 @@ print(res.body);
           'message': 'An unknown error occurred',
         };
       }
-    } catch (e) {
-      print("Error during sign-in: $e");
-      return {
-        'success': false,
-        'message': 'An error occurred during sign-in',
-      };
-    }
+    // } catch (e) {
+      // print("Error during sign-in: $e");
+      // return {
+      //   'success': false,
+      //   'message': 'An error occurred during sign-in',
+      // };
+    // }
   }
 
   Future<Map<String, dynamic>> editProfile({
@@ -250,7 +252,7 @@ static Future<String> updateQuiz(data)async{
 
 
 
-static  Future<dynamic> getInvestments()async{
+static  Future<List> getInvestments()async{
   try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
        var authToken= await prefs.getString('authToken');
@@ -259,12 +261,21 @@ static  Future<dynamic> getInvestments()async{
           "Bearer $authToken"
      );
     if(res.statusCode==200){
-      print(res.body);
+      var data=           json.decode(res.body);
+      
+     print(data['data'].runtimeType);
+
+      return data['data'];
+  
     }else{
+      
+      print("erri");
       print(res.body);
+      return [];
     }
   } catch (e) {
-    
+    print(e);
+    return [];
   }
 }
 }
