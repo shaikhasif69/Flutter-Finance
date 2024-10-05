@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/components/constant.dart';
+import 'package:flutter_finance/services/auth_services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddNewInvestment extends StatefulWidget {
   const AddNewInvestment({super.key});
@@ -59,38 +62,75 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
   }
 
   void _addToProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? authToken = prefs.getString('authToken');
+
     if (stockDetails.isNotEmpty) {
       Map<String, dynamic> requestBody = {
         "investType": "Stocks",
         "stocks": stockDetails.map((stock) {
           return {
             "name": stock['stockName'],
-            "investedAmount": double.parse(
-                stock['investedAmount']), 
-            "numberOfStocks":
-                int.parse(stock['numberOfStocks']), 
-            "pricePerStock":
-                _calculatedShares 
+            "investedAmount": stock['investedAmount'].toString(),
+            "numberOfStocks": stock['numberOfStocks'].toString(),
+            "pricePerStock": _calculatedShares.toString()
           };
         }).toList()
       };
 
       final response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/users/invest'),
+        Uri.parse('http://192.168.137.124:3000/users/invest'),
         headers: {
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer $authToken"
         },
         body: jsonEncode(requestBody),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final responseBody = jsonDecode(response.body);
+       showDialog<void>(
+      context: context,
+      barrierDismissible: true, 
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Success!'),
+          content: Text('You added stocks succesfully!'),
+        );
+      },
+    );
+    setState(() {
+        _selectedStockNameController.text = "";
+        _selectedAmountController.text = "";
+        _selectedNumberOfStocks.text = "";
+        _calculatedShares = 0;
+         stockDetails.clear();
+      });
         print('Successfully added to profile: $responseBody');
       } else {
+        showDialog<void>(
+      context: context,
+      barrierDismissible: true, 
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Opp!!'),
+          content: Text("Something went wrong, we'll fix it right away!"),
+        );
+      },
+    );
         print('Failed to add to profile: ${response.body}');
       }
     } else {
+      showDialog<void>(
+      context: context,
+      barrierDismissible: true, 
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('No Stocks!'),
+          content: Text('You have not selected any stocks to Add in the Portfolio!'),
+        );
+      },
+    );
       print("No stock details available to add to profile.");
     }
   }
@@ -104,7 +144,7 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
           'stockName': _selectedStockNameController.text,
           'investedAmount': _selectedAmountController.text,
           'numberOfStocks': _numberOfStocks,
-          'calculatedShares': _calculatedShares
+          'calculatedShares': _calculatedShares.toString()
         });
         _selectedStockNameController.text = "";
         _selectedAmountController.text = "";

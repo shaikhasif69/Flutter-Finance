@@ -26,21 +26,18 @@ class _NewsHomePageState extends State<NewsHomePage> {
   late String formattedDate;
   List<NewsModels> newsList = [];
 
-
   // Function to fetch news from API
   Future<void> fetchNews() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? authToken = prefs.getString('authToken');
-    // final url = Uri.parse(
-    //   'http://192.168.137.246:3000/users/news',
-    // );
-final response = await http.get(
-        Uri.parse('http://192.168.137.246:3000/users/news'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
-        },
-      );
+
+    final response = await http.get(
+      Uri.parse('http://192.168.137.124:3000/users/news'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+    );
     try {
       // final response = await http.get(url);
 
@@ -51,7 +48,7 @@ final response = await http.get(
             data.map((item) => NewsModels.fromJson(item)).toList();
         setState(() {
           newsList = fetchedNews;
-          // print me this newsList to see if this api is working or not 
+          // print me this newsList to see if this api is working or not
           print(newsList);
         });
       } else {
@@ -169,12 +166,16 @@ final response = await http.get(
                           height: screenHeight * 0.35,
                           child: newsList.isNotEmpty
                               ? ListView.builder(
-                                scrollDirection: Axis.horizontal,
+                                  scrollDirection: Axis.horizontal,
                                   itemCount: newsList.length,
                                   itemBuilder: (context, index) {
-                                    
                                     final newsItem = newsList[index];
-                                    return NewsCard(authorName: newsItem.authors![0] ?? "", articalDescription: newsItem.summary ?? "", imagePath: newsItem.bannerImage ?? "", date: newsItem.timePublished ?? "");
+                                    return NewsCard(
+                                        authorName: newsItem.authors![0] ?? "",
+                                        articalDescription:
+                                            newsItem.summary ?? "",
+                                        imagePath: newsItem.bannerImage ?? "",
+                                        date: newsItem.timePublished ?? "");
                                     //return ListTile(
                                     //   leading: Image.network(
                                     //     newsItem.bannerImage ?? '',
