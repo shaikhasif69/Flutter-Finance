@@ -3,6 +3,8 @@ import 'package:flutter_finance/components/constant.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddNewInvestment extends StatefulWidget {
   const AddNewInvestment({super.key});
@@ -56,8 +58,44 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
     }
   }
 
-  void _addMoreStocks() {
+  void _addToProfile() async {
+    if (stockDetails.isNotEmpty) {
+      Map<String, dynamic> requestBody = {
+        "investType": "Stocks",
+        "stocks": stockDetails.map((stock) {
+          return {
+            "name": stock['stockName'],
+            "investedAmount": double.parse(
+                stock['investedAmount']), 
+            "numberOfStocks":
+                int.parse(stock['numberOfStocks']), 
+            "pricePerStock":
+                _calculatedShares 
+          };
+        }).toList()
+      };
 
+      final response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/users/invest'),
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        print('Successfully added to profile: $responseBody');
+      } else {
+        print('Failed to add to profile: ${response.body}');
+      }
+    } else {
+      print("No stock details available to add to profile.");
+    }
+  }
+
+  void _addMoreStocks() {
     if (_selectedStockNameController.text.isNotEmpty &&
         _selectedAmountController.text.isNotEmpty &&
         _selectedNumberOfStocks.text.isNotEmpty) {
@@ -110,7 +148,6 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
             child: Text(formattedDate),
           ),
           SizedBox(height: screenHeight * 0.02),
-
           Expanded(
               child: Container(
             decoration: const BoxDecoration(
@@ -124,7 +161,7 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-          SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.02),
                   const Text(
                     'Please select your investment type:',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -164,7 +201,6 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -173,8 +209,8 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                           labelText: 'Stock Name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                BorderSide(color: Colors.grey[400]!, width: 1.5),
+                            borderSide: BorderSide(
+                                color: Colors.grey[400]!, width: 1.5),
                           ),
                         ),
                         onChanged: (value) {
@@ -185,7 +221,6 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -196,8 +231,8 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                           labelText: 'Invested Amount',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                BorderSide(color: Colors.grey[400]!, width: 1.5),
+                            borderSide: BorderSide(
+                                color: Colors.grey[400]!, width: 1.5),
                           ),
                         ),
                         onChanged: (value) {
@@ -208,7 +243,6 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -218,8 +252,8 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                           labelText: 'Number of Stocks',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                BorderSide(color: Colors.grey[400]!, width: 1.5),
+                            borderSide: BorderSide(
+                                color: Colors.grey[400]!, width: 1.5),
                           ),
                         ),
                         onChanged: (value) {
@@ -231,33 +265,31 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     Text('Calculated Value of Shares: $_calculatedShares'),
                     const SizedBox(height: 20),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                            style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(MyColors.appBackGround)
-                          ),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  MyColors.appBackGround)),
                           onPressed: _addMoreStocks,
                           child: const Text('Add More Stocks'),
                         ),
-                        SizedBox(width: 20,),
+                        SizedBox(
+                          width: 20,
+                        ),
                         ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(MyColors.ourPrimary)
-                          ),
-                          onPressed: _addMoreStocks,
+                              backgroundColor: MaterialStateProperty.all(
+                                  MyColors.ourPrimary)),
+                          onPressed: _addToProfile,
                           child: const Text('Add To Profile'),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
-
                     if (stockDetails.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
