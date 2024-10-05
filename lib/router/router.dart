@@ -1,3 +1,4 @@
+import 'package:flutter_finance/Screens/News/news_homepage.dart';
 import 'package:flutter_finance/Screens/On_Board/on_boarding.dart';
 import 'package:flutter_finance/Screens/Personal_Info/personal_info.dart';
 import 'package:flutter_finance/Screens/add_new_investment.dart';
@@ -71,6 +72,11 @@ class MyGoRouter {
       path: UserRoutes.addNewInvestment,
       name: UserRoutes.addNewInvestment,
       builder: (context, state) => AddNewInvestment(),
+    ),
+    GoRoute(
+      path: UserRoutes.newsHomePage,
+      name: UserRoutes.newsHomePage,
+      builder: (context, state) => NewsHomePage(),
     ),
   ]);
 }

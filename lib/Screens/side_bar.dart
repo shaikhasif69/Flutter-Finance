@@ -55,6 +55,7 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             leading: Icon(Icons.newspaper),
             title: Text('Opportunities'),
+            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.newsHomePage),
           ),
           Divider(),
           ListTile(
