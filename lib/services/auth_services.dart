@@ -104,7 +104,7 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {
-    try {
+    // try {
       print("Signing in with: $email");
 
       var temail = email.trim();
@@ -124,9 +124,11 @@ class AuthService {
       if (response.statusCode == 201) {
         print("Sign-in successful");
         final body = jsonDecode(response.body);
+        print(body);
         final user = body['user'];
         final token = body['token'];
-        final risk = body['user']['riskTolarence'];
+        final risk= body['user']['riskTolerance'];
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
         await prefs.setString('riskApitite', risk);
@@ -148,13 +150,13 @@ class AuthService {
           'message': 'An unknown error occurred',
         };
       }
-    } catch (e) {
-      print("Error during sign-in: $e");
-      return {
-        'success': false,
-        'message': 'An error occurred during sign-in',
-      };
-    }
+    // } catch (e) {
+      // print("Error during sign-in: $e");
+      // return {
+      //   'success': false,
+      //   'message': 'An error occurred during sign-in',
+      // };
+    // }
   }
 
   Future<Map<String, dynamic>> editProfile({

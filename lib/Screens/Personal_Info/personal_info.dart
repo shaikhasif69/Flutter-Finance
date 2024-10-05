@@ -247,125 +247,127 @@ class _PersonalInfoState extends State<PersonalInfo> {
       "Tech stocks"
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Please provide your financial details:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 20),
-
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(10), 
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Please provide your financial details:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          padding: const EdgeInsets.all(8),
-          child: MultiSelectDialogField(
-            items:
-                futureGoals.map((goal) => MultiSelectItem(goal, goal)).toList(),
-            title: const Text("Select Future Goal"),
-            buttonText: const Text("Future Goal"), 
-            onConfirm: (values) {
-              setState(() {
-                selectedFutureGoals = values.cast<String>();
-              });
-            },
+          const SizedBox(height: 20),
+      
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(10), 
+            ),
+            padding: const EdgeInsets.all(8),
+            child: MultiSelectDialogField(
+              items:
+                  futureGoals.map((goal) => MultiSelectItem(goal, goal)).toList(),
+              title: const Text("Select Future Goal"),
+              buttonText: const Text("Future Goal"), 
+              onConfirm: (values) {
+                setState(() {
+                  selectedFutureGoals = values.cast<String>();
+                });
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-
-        // Current Savings Slider
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100], // Light background
-            borderRadius: BorderRadius.circular(10),
+          const SizedBox(height: 20),
+      
+          // Current Savings Slider
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100], // Light background
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Current Savings (in Rupees)',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+                Slider(
+                  value: _currentSavings,
+                  min: 1000,
+                  max: 1000000,
+                  divisions: 1000,
+                  label: _currentSavings.round().toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _currentSavings = value;
+                    });
+                  },
+                ),
+                Text('₹${_currentSavings.round()}'),
+              ],
+            ),
           ),
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Current Savings (in Rupees)',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              Slider(
-                value: _currentSavings,
-                min: 1000,
-                max: 1000000,
-                divisions: 1000,
-                label: _currentSavings.round().toString(),
-                onChanged: (double value) {
-                  setState(() {
-                    _currentSavings = value;
-                  });
-                },
-              ),
-              Text('₹${_currentSavings.round()}'),
-            ],
+          const SizedBox(height: 20),
+      
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100], 
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: MultiSelectDialogField(
+              items: investments
+                  .map((investment) => MultiSelectItem(investment, investment))
+                  .toList(),
+              title: const Text("Select Existing Investments"),
+              buttonText:
+                  const Text("Existing Investments"),
+              onConfirm: (values) {
+                setState(() {
+                  selectedInvestments = values.cast<String>();
+                });
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100], 
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.all(8),
-          child: MultiSelectDialogField(
-            items: investments
-                .map((investment) => MultiSelectItem(investment, investment))
-                .toList(),
-            title: const Text("Select Existing Investments"),
-            buttonText:
-                const Text("Existing Investments"),
-            onConfirm: (values) {
-              setState(() {
-                selectedInvestments = values.cast<String>();
-              });
-            },
-          ),
-        ),
-        const SizedBox(height: 20),
-
-         Center(
-          child: ElevatedButton(
-           onPressed: () async{
-String msg="";
-            if(_ageController.text==""){
-              msg="Age is needed";
-            }else if(selectedFutureGoals.isEmpty){
-              msg ="Future goals empty";
-            }else if(selectedInvestments.isEmpty){
-                      msg ="investment  empty";
-            }
-            if(msg!=""){
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-            }else{
-
-            
-              showDialog( barrierDismissible: false,context: context, builder: (context){return AlertDialog(backgroundColor: Colors.transparent,
-                content: Center(child: CircularProgressIndicator(),),
-              );});
-              String res= await AuthService.updatePersonalInfo(int.parse(_ageController.text), _selectedHealthStatus, selectedFutureGoals.join(',') ,int.parse(_selectedDependents),_incomeController,_selectedEducation,selectedInvestments.join(","),_currentSavings);
+          const SizedBox(height: 20),
+      
+           Center(
+            child: ElevatedButton(
+             onPressed: () async{
+      String msg="";
+              if(_ageController.text==""){
+                msg="Age is needed";
+              }else if(selectedFutureGoals.isEmpty){
+                msg ="Future goals empty";
+              }else if(selectedInvestments.isEmpty){
+                        msg ="investment  empty";
+              }
+              if(msg!=""){
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+              }else{
+      
               
-             if(res=="done"){
-              Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                showDialog( barrierDismissible: false,context: context, builder: (context){return AlertDialog(backgroundColor: Colors.transparent,
+                  content: Center(child: CircularProgressIndicator(),),
+                );});
+                String res= await AuthService.updatePersonalInfo(int.parse(_ageController.text), _selectedHealthStatus, selectedFutureGoals.join(',') ,int.parse(_selectedDependents),_incomeController,_selectedEducation,selectedInvestments.join(","),_currentSavings);
                 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Upadated")));
-             }else{
-                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("error Accoured")));
-             }}
-            // Handle form submission or API call
-          },
-          child: const Text('Submit'),
-          ),
-         )
-      ],
+               if(res=="done"){
+                Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Upadated")));
+               }else{
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("error Accoured")));
+               }}
+              // Handle form submission or API call
+            },
+            child: const Text('Submit'),
+            ),
+           )
+        ],
+      ),
     );
   }
 }

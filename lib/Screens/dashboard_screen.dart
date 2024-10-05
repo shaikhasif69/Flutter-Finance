@@ -19,13 +19,11 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 late SharedPreferences pref=AuthService.pref;
+
   @override
   void initState() {
-       WidgetsBinding.instance!.addPostFrameCallback((_) {
-   var res= pref.getString('riskApitite');
-   if(res!=null && res!=""){
-ref.read(investmentProvider.notifier).getInvestment();
-   }
+       WidgetsBinding.instance!.addPostFrameCallback((_)async {
+   ref.read(investmentProvider.notifier).getInvestment();
   // executes after build
 });
   
@@ -35,7 +33,9 @@ ref.read(investmentProvider.notifier).getInvestment();
  
   @override
   Widget build(BuildContext context) {
-   var data= ref.watch(investmentProvider);
+
+  ref.watch(investmentProvider);
+   var data=   ref.read(investmentProvider.notifier).data;
         final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -236,11 +236,15 @@ ref.read(investmentProvider.notifier).getInvestment();
             ),
             pref.getString('riskApitite')==""||pref.getString('riskApitite')==null? SizedBox( height: 50, child: ElevatedButton(onPressed: (){GoRouter.of(context).pushNamed(UserRoutes.quiz);
 
-            }, child: Text("quetionannry"))) : SizedBox(height: 400,
-              child: ListView.builder(itemBuilder: (context,index){
-              
-                return Text("");
-              }),
+            }, child: Text("quetionannry"))) : SizedBox(height: 250,
+              child: data!=null && data.isNotEmpty? ListView.builder( scrollDirection: Axis.horizontal,
+                itemCount: data.length,
+                itemBuilder: (context,index){
+                 var item=data[index];
+                 print(item);
+                 print(item.runtimeType);
+                return StockCard(companyName: item['investment_name'].toString(), currentPrice: item['cost'].toString(), imagePath: "assets/images/council (1).png", isBullMarket: false );
+              }):Center(child: CircularProgressIndicator()),
             ),
             SizedBox(
               height: screenHeight * 0.02,

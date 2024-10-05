@@ -44,7 +44,7 @@ class _UserLoginState extends State<UserLogin> {
         SnackBar(content: Text('Login successful!')),
       );
 
-      GoRouter.of(context).pushNamed(UserRoutes.personalInfo);
+      GoRouter.of(context).pushNamed(UserRoutes.homeScreen);
 
     } else {
       // Show error message if sign-in fails
