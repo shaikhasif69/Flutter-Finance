@@ -11,7 +11,10 @@ class PortfolioPiechart extends StatefulWidget {
 class _PortfolioPiechartState extends State<PortfolioPiechart> {
   @override
   Widget build(BuildContext context) {
-    return PieChart(PieChartData(sections: [
+    return PieChart(
+        swapAnimationDuration: const Duration(milliseconds: 750),
+        swapAnimationCurve: Curves.easeInOutQuint,
+        PieChartData(sections: [
       PieChartSectionData(
         value: 20,
         color: Colors.yellow,

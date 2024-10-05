@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_finance/Screens/dashboard_screen.dart';
 import 'package:flutter_finance/Screens/investment_page.dart';
 import 'package:flutter_finance/Screens/portfolio_page.dart';
+import 'package:flutter_finance/Screens/profile_screen.dart';
 import 'package:flutter_finance/Screens/side_bar.dart';
 import 'package:flutter_finance/components/constant.dart';
 import 'package:flutter_finance/widgets/stock_card.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     PortfolioPage(),
     InvestmentPage(),
     Container(color: Colors.white),
-    Container(color: Colors.white),
+    ProfileScreen()
   ];
   @override
   Widget build(BuildContext context) {

@@ -2,8 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/Screens/News/short_news_card.dart';
 import 'package:flutter_finance/components/constant.dart';
+import 'package:flutter_finance/models/ipo_models.dart';
 import 'package:flutter_finance/models/new_models.dart';
+import 'package:flutter_finance/models/new_shortNews.dart';
 import 'package:flutter_finance/router/named_routes.dart';
+import 'package:flutter_finance/services/auth_services.dart';
 import 'package:flutter_finance/widgets/news_card.dart';
 import 'package:flutter_finance/widgets/portfolio_piechart.dart';
 import 'package:go_router/go_router.dart';
@@ -25,22 +28,40 @@ class _NewsHomePageState extends State<NewsHomePage> {
   final DateTime now = DateTime.now();
   late String formattedDate;
   List<NewsModels> newsList = [];
+  List<Map<String, String>> newsList2 = [];
+  bool isLoading = true;
+  bool hasError = false;
+  late Future<ipoModels> futureIpo;
 
+  // Future<void> _loadNews() async {
+  //   try {
+  //     final fetchedNews = await AuthService().fetchNews();
+  //     setState(() {
+  //       newsList =
+  //           fetchedNews.map((item) => NewsModels.fromJson(item)).toList();
+  //       isLoading = false;
+  //       hasError = fetchedNews.isEmpty;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //       hasError = true;
+  //     });
+  //   }
+  // }
 
   // Function to fetch news from API
   Future<void> fetchNews() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? authToken = prefs.getString('authToken');
-    // final url = Uri.parse(
-    //   'http://192.168.137.246:3000/users/news',
-    // );
-final response = await http.get(
-        Uri.parse('http://192.168.137.246:3000/users/news'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
-        },
-      );
+
+    final response = await http.get(
+      Uri.parse('http://192.168.137.124:3000/users/news'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+    );
     try {
       // final response = await http.get(url);
 
@@ -51,7 +72,7 @@ final response = await http.get(
             data.map((item) => NewsModels.fromJson(item)).toList();
         setState(() {
           newsList = fetchedNews;
-          // print me this newsList to see if this api is working or not 
+          // print me this newsList to see if this api is working or not
           print(newsList);
         });
       } else {
@@ -62,11 +83,16 @@ final response = await http.get(
     }
   }
 
+  late Future<List<NewsModels2>> futureNews;
+
   @override
   void initState() {
     super.initState();
     formattedDate = DateFormat('MMMM d, y').format(now);
     fetchNews();
+    final authService = AuthService();
+    futureNews = authService.fetchTrendingNews();
+    futureIpo = authService.fetchIpoData();
   }
 
   @override
@@ -166,15 +192,19 @@ final response = await http.get(
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
-                          height: screenHeight * 0.35,
+                          height: screenHeight * 0.38,
                           child: newsList.isNotEmpty
                               ? ListView.builder(
-                                scrollDirection: Axis.horizontal,
+                                  scrollDirection: Axis.horizontal,
                                   itemCount: newsList.length,
                                   itemBuilder: (context, index) {
-                                    
                                     final newsItem = newsList[index];
-                                    return NewsCard(authorName: newsItem.authors![0] ?? "", articalDescription: newsItem.summary ?? "", imagePath: newsItem.bannerImage ?? "", date: newsItem.timePublished ?? "");
+                                    return NewsCard(
+                                        authorName: newsItem.authors![0] ?? "",
+                                        articalDescription:
+                                            newsItem.summary ?? "",
+                                        imagePath: newsItem.bannerImage ?? "",
+                                        date: newsItem.timePublished ?? "");
                                     //return ListTile(
                                     //   leading: Image.network(
                                     //     newsItem.bannerImage ?? '',
@@ -204,7 +234,7 @@ final response = await http.get(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Short for You",
+                              "Trending News",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
@@ -218,61 +248,97 @@ final response = await http.get(
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: SizedBox(
-                          height: screenHeight * 0.15,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: const [
-                              ShortNews(
-                                imagePath: 'assets/images/image.png',
-                                title: 'Title of the news',
-                                source: 'Source of the news',
-                              ),
-                              ShortNews(
-                                imagePath: 'assets/images/image.png',
-                                title: 'Title of the news',
-                                source: 'Source of the news',
-                              ),
-                            ],
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          child: FutureBuilder<List<NewsModels2>>(
+                            future: futureNews,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                    child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Center(
+                                    child: Text('No trending news available.'));
+                              }
+
+                              List<NewsModels2> newsList =
+                                  snapshot.data!.take(5).toList();
+
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: newsList.length,
+                                itemBuilder: (context, index) {
+                                  return ShortNews(
+                                    imagePath: 'assets/images/image.png',
+                                    title: newsList[index].title ?? 'No title',
+                                    source: newsList[index].source ??
+                                        'Unknown source',
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Trending",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Text("View All")
-                          ],
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 20.0, vertical: 10),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Text(
+                      //         "Trending",
+                      //         style: TextStyle(
+                      //           fontSize: 20,
+                      //           fontWeight: FontWeight.w500,
+                      //           color: Colors.black,
+                      //         ),
+                      //       ),
+                      //       Text("View All")
+                      //     ],
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: SizedBox(
-                          height: screenHeight * 0.15,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: const [
-                              ShortNews(
-                                imagePath: 'assets/images/image.png',
-                                title: 'Title of Tredning news',
-                                source: 'Source of the news',
-                              ),
-                              ShortNews(
-                                imagePath: 'assets/images/image.png',
-                                title: 'Title of the world',
-                                source: 'Source of the news',
-                              ),
-                            ],
-                          ),
+                        child: FutureBuilder<ipoModels>(
+                          future: futureIpo,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                  child:
+                                      CircularProgressIndicator()); // Show loading indicator
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                      'Error: ${snapshot.error}')); // Handle errors
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.ipoCalendar == null ||
+                                snapshot.data!.ipoCalendar!.isEmpty) {
+                              return Center(
+                                  child: Text(
+                                      'No IPO data available.')); // No data available
+                            }
+
+                            // Extract IPO calendar data
+                            List<IpoCalendar>? ipoList =
+                                snapshot.data!.ipoCalendar;
+
+                            return ListView.builder(
+                              itemCount: ipoList!.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(ipoList[index].name ?? 'No name'),
+                                  subtitle: Text(
+                                      'Date: ${ipoList[index].date} - Status: ${ipoList[index].status}'),
+                                );
+                              },
+                            );
+                          },
                         ),
                       )
                     ],

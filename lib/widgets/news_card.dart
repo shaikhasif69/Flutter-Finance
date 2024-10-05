@@ -1,5 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/components/constant.dart';
+import 'package:intl/intl.dart';
+
+
+
+String formatDate(String dateString) {
+  if (dateString.length != 15) {
+    throw Exception("Date string must be in the format YYYYMMDDTHHMMSS");
+  }
+  String datePart = dateString.substring(0, 8);
+  String timePart = dateString.substring(9, 15); 
+
+  DateTime dateTime = DateTime.parse(
+      "${datePart.substring(0, 4)}-${datePart.substring(4, 6)}-${datePart.substring(6, 8)} ${timePart.substring(0, 2)}:${timePart.substring(2, 4)}:${timePart.substring(4, 6)}");
+
+  return DateFormat('MMMM d, y').format(dateTime); 
+}
 
 class NewsCard extends StatelessWidget {
   final String authorName;
@@ -28,9 +44,9 @@ class NewsCard extends StatelessWidget {
       child: Container(
         width: screenWidth * 0.62,
         decoration: BoxDecoration(
-          color: MyColors.newCard,
-          borderRadius: BorderRadius.circular(15),
-        ),
+            color: MyColors.appBackGround,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,7 +54,7 @@ class NewsCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.network(
-                imagePath,  
+                imagePath,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 140,
@@ -46,7 +62,7 @@ class NewsCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              authorName,  
+              authorName,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -56,20 +72,19 @@ class NewsCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              
-              articalDescription, 
+              articalDescription,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,
                 fontSize: 14,
                 color: Colors.black87,
               ),
               textAlign: TextAlign.center,
-              maxLines: 3,  // Limit the description to 3 lines
-              overflow: TextOverflow.ellipsis,  // Add ellipsis for longer text
+              maxLines: 3, // Limit the description to 3 lines
+              overflow: TextOverflow.ellipsis, // Add ellipsis for longer text
             ),
             SizedBox(height: 10),
             Text(
-              date,  // Removed null check
+              formatDate(date),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey,
