@@ -6,6 +6,7 @@ import 'package:flutter_finance/Screens/ask_loginPage.dart';
 import 'package:flutter_finance/Screens/home_screen.dart';
 import 'package:flutter_finance/Screens/investment_page.dart';
 import 'package:flutter_finance/Screens/login_screen.dart';
+import 'package:flutter_finance/Screens/quiz.dart';
 import 'package:flutter_finance/Screens/signup.dart';
 import 'package:flutter_finance/Screens/splash_screen.dart';
 import 'package:flutter_finance/router/named_routes.dart';
@@ -46,6 +47,11 @@ class MyGoRouter {
       path: UserRoutes.askLoginScreen,
       name: UserRoutes.askLoginScreen,
       builder: (context, state) => AskLoginpage(),
+    ),
+    GoRoute(
+      path: UserRoutes.quiz,
+      name: UserRoutes.quiz,
+      builder: (context, state) => Quiz(),
     ),
     GoRoute(
       path: UserRoutes.login,

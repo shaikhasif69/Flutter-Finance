@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/components/constant.dart';
+import 'package:flutter_finance/providers/homePgaeInvestMentProvider.dart';
+import 'package:flutter_finance/router/named_routes.dart';
+import 'package:flutter_finance/services/auth_services.dart';
 import 'package:flutter_finance/widgets/stock_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+late SharedPreferences pref=AuthService.pref;
+  @override
+  void initState() {
+       WidgetsBinding.instance!.addPostFrameCallback((_) {
+   var res= pref.getString('riskApitite');
+   if(res!=null && res!=""){
+ref.read(investmentProvider.notifier).getInvestment();
+   }
+  // executes after build
+});
+  
+    // TODO: implement initState
+    super.initState();
+  }
+ 
   @override
   Widget build(BuildContext context) {
+   var data= ref.watch(investmentProvider);
         final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -212,37 +234,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.245,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  StockCard(
-                    companyName: 'Tata Motors',
-                    currentPrice: '650.55',
-                    imagePath: 'assets/images/facebook.png',
-                    isBullMarket: true, // Show bull run animation
-                  ),
-                  StockCard(
-                    companyName: 'Reliance Industries',
-                    currentPrice: '2390.75',
-                    imagePath: 'assets/images/facebook.png',
-                    isBullMarket: false, // Show bear market animation
-                  ),
-                  StockCard(
-                    companyName: 'Infosys',
-                    currentPrice: '1485.20',
-                    imagePath: 'assets/images/facebook.png',
-                    isBullMarket: true, // Show bull run animation
-                  ),
-                  StockCard(
-                    companyName: 'HDFC Bank',
-                    currentPrice: '1580.10',
-                    imagePath: 'assets/images/facebook.png',
-                    isBullMarket: false, // Show bear market animation
-                  ),
-                ],
-              ),
+            pref.getString('riskApitite')==""||pref.getString('riskApitite')==null? SizedBox( height: 50, child: ElevatedButton(onPressed: (){GoRouter.of(context).pushNamed(UserRoutes.quiz);
+
+            }, child: Text("quetionannry"))) : SizedBox(height: 400,
+              child: ListView.builder(itemBuilder: (context,index){
+              
+                return Text("");
+              }),
             ),
             SizedBox(
               height: screenHeight * 0.02,

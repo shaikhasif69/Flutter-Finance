@@ -3,8 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String baseUrl = "http://192.168.137.246:3000/users";
-
+ static final String baseUrl = "http://192.168.137.124:3000/users";
+ static final String versal="https://vh-24-byte-fuse.vercel.app/users";
+ static final String django="http://192.168.137.108:8080/ai/computePortfolio/";
+ static late  SharedPreferences pref;
+static Future<SharedPreferences> getPref()async{
+  pref=await SharedPreferences.getInstance();
+ return pref;
+}
 
   Future<Map<String, dynamic>> signUp(String email, String username, String password) async {
     try {
@@ -12,7 +18,7 @@ class AuthService {
       var temail = email.trim();
       var tusername = username.trim();
       var tpassword = password.trim();
-
+      
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {
@@ -54,6 +60,39 @@ class AuthService {
     }
   }
 
+  static Future<String> updatePersonalInfo(age,healthCondition,futureGoal,noOfeDepen,income,edu,invest,sav)async{
+
+    try {var  data={"age":age,
+    "noOfDependent":noOfeDepen,
+    "annualIncome":income,
+    "highestEDU":edu,
+    "currentSaving":sav,
+   "healthCondition":healthCondition,  "futurefinancialgoal":futureGoal,
+   "existingInvestments":invest
+   }
+ ;    SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? authToken = prefs.getString('authToken');
+    var res=await http.patch(Uri.parse('https://vh-24-byte-fuse.vercel.app/users/editProfile',),headers:  {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authToken', 
+        });
+    if(res.statusCode==200){
+print(res.body);
+      return "done";
+
+    } print(res.body);
+    return "fail";
+      
+    } catch (e) {
+      print("SSSSSs");
+      print(e.toString());
+      return "fail";
+      
+    }
+   
+
+  }
+
   Future<Map<String, dynamic>> signIn(String email, String password) async {
     try {
       print("Signing in with: $email");
@@ -77,9 +116,10 @@ class AuthService {
         final body = jsonDecode(response.body);
         final user = body['user'];
         final token = body['token'];
-
+        final risk= body['riskTolarence'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
+            await prefs.setString('riskApitite', risk);
         await prefs.setString('userId', user['_id']);
         await prefs.setString('username', user['username']);
         await prefs.setString('email', user['email']);
@@ -177,4 +217,54 @@ class AuthService {
       };
     }
   }
+
+static Future<String> updateQuiz(data)async{
+  // try {
+  print("ssssss");
+    print(data);
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String,List<int>> d={"answers":data};
+
+;      String? authToken = prefs.getString('authToken');
+    var res=await http.post(Uri.parse(baseUrl+"/submit-risk"),body: jsonEncode(d),headers: {
+       'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authToken', 
+        });
+    if(res.statusCode==200){
+    var resp=json.decode(res.body);
+   pref.setString("riskApitite", resp['riskCategory']);
+   return "done";
+
+
+
+    }else {
+      print(res.body);
+      return "fail";
+    }
+  // } catch (e) {
+    // print(e.toString());
+    return "fail";
+  // }
+}
+
+
+
+static  Future<dynamic> getInvestments()async{
+  try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+       var authToken= await prefs.getString('authToken');
+    var res= await http.post(Uri.parse(django),body: 
+  
+          "Bearer $authToken"
+     );
+    if(res.statusCode==200){
+      print(res.body);
+    }else{
+      print(res.body);
+    }
+  } catch (e) {
+    
+  }
+}
 }

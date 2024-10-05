@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/components/constant.dart';
+import 'package:flutter_finance/services/auth_services.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-
+import 'package:http/http.dart' as http;
 class PersonalInfo extends StatefulWidget {
   const PersonalInfo({super.key});
 
@@ -332,7 +333,33 @@ class _PersonalInfoState extends State<PersonalInfo> {
 
          Center(
           child: ElevatedButton(
-           onPressed: () {
+           onPressed: () async{
+String msg="";
+            if(_ageController.text==""){
+              msg="Age is needed";
+            }else if(selectedFutureGoals.isEmpty){
+              msg ="Future goals empty";
+            }else if(selectedInvestments.isEmpty){
+                      msg ="investment  empty";
+            }
+            if(msg!=""){
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+            }else{
+
+            
+              showDialog( barrierDismissible: false,context: context, builder: (context){return AlertDialog(backgroundColor: Colors.transparent,
+                content: Center(child: CircularProgressIndicator(),),
+              );});
+              String res= await AuthService.updatePersonalInfo(int.parse(_ageController.text), _selectedHealthStatus, selectedFutureGoals.join(',') ,int.parse(_selectedDependents),_incomeController,_selectedEducation,selectedInvestments.join(","),_currentSavings);
+              
+             if(res=="done"){
+              Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Data Upadated")));
+             }else{
+                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("error Accoured")));
+             }}
             // Handle form submission or API call
           },
           child: const Text('Submit'),

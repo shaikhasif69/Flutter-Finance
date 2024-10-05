@@ -40,7 +40,7 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             leading: Icon(Icons.update),
             title: Text('Update Profile'),
-            onTap: () => null,
+            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.personalInfo),
           ),
           ListTile(
             leading: Icon(Icons.golf_course_sharp),
