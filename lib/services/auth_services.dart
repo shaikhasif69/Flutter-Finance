@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_finance/models/ipo_models.dart';
+import 'package:flutter_finance/models/new_shortNews.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,6 +9,7 @@ class AuthService {
   static final String versal = "https://vh-24-byte-fuse.vercel.app/users";
   static final String django =
       "http://192.168.137.108:8080/ai/computePortfolio/";
+      late String formattedDate;
   static late SharedPreferences pref;
   static Future<SharedPreferences> getPref() async {
     pref = await SharedPreferences.getInstance();
@@ -105,57 +108,57 @@ class AuthService {
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {
     // try {
-      print("Signing in with: $email");
+    print("Signing in with: $email");
 
-      var temail = email.trim();
-      var tpassword = password.trim();
+    var temail = email.trim();
+    var tpassword = password.trim();
 
-      final response = await http.post(
-        Uri.parse('$baseUrl/signin'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': temail,
-          'password': tpassword,
-        }),
-      );
+    final response = await http.post(
+      Uri.parse('$baseUrl/signin'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': temail,
+        'password': tpassword,
+      }),
+    );
 
-      if (response.statusCode == 201) {
-        print("Sign-in successful");
-        final body = jsonDecode(response.body);
-        print(body);
-        final user = body['user'];
-        final token = body['token'];
-        final risk= body['user']['riskTolerance'];
+    if (response.statusCode == 201) {
+      print("Sign-in successful");
+      final body = jsonDecode(response.body);
+      print(body);
+      final user = body['user'];
+      final token = body['token'];
+      final risk = body['user']['riskTolerance'];
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', token);
-        await prefs.setString('riskApitite', risk);
-        await prefs.setString('userId', user['_id']);
-        await prefs.setString('username', user['username']);
-        await prefs.setString('email', user['email']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', token);
+      await prefs.setString('riskApitite', risk);
+      await prefs.setString('userId', user['_id']);
+      await prefs.setString('username', user['username']);
+      await prefs.setString('email', user['email']);
 
-        return {'success': true, 'user': user, 'token': token};
-      } else if (response.statusCode == 404) {
-        final body = jsonDecode(response.body);
-        return {
-          'success': false,
-          'message': body['message'] ?? 'User not found or invalid credentials',
-        };
-      } else {
-        print("Sign-in failed: ${response.statusCode}");
-        return {
-          'success': false,
-          'message': 'An unknown error occurred',
-        };
-      }
+      return {'success': true, 'user': user, 'token': token};
+    } else if (response.statusCode == 404) {
+      final body = jsonDecode(response.body);
+      return {
+        'success': false,
+        'message': body['message'] ?? 'User not found or invalid credentials',
+      };
+    } else {
+      print("Sign-in failed: ${response.statusCode}");
+      return {
+        'success': false,
+        'message': 'An unknown error occurred',
+      };
+    }
     // } catch (e) {
-      // print("Error during sign-in: $e");
-      // return {
-      //   'success': false,
-      //   'message': 'An error occurred during sign-in',
-      // };
+    // print("Error during sign-in: $e");
+    // return {
+    //   'success': false,
+    //   'message': 'An error occurred during sign-in',
+    // };
     // }
   }
 
@@ -275,5 +278,65 @@ class AuthService {
         print(res.body);
       }
     } catch (e) {}
+  }
+
+  Future<List<NewsModels2>> fetchTrendingNews() async {
+    final response = await http
+        .get(Uri.parse('http://192.168.137.124:3000/users/trending-news'));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((news) => NewsModels2.fromJson(news)).toList();
+    } else {
+      throw Exception('Failed to load trending news');
+    }
+  }
+
+  Future<ipoModels> fetchIpoData() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.137.124:3000/users/ipo'));
+
+    if (response.statusCode == 200) {
+      return ipoModels.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load IPO data');
+    }
+  }
+
+  Future<void> fetchAndStoreInvestmentData() async {
+    final url = 'http://192.168.137.124:3000/users/getUserInvestment';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? authToken = prefs.getString('authToken');
+    try {
+      final response = await http.get(Uri.parse(url), headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $authToken',
+          });
+
+      if (response.statusCode == 200) {
+        print("hurrayyyyyyyyyyy");
+        final data = json.decode(response.body);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await prefs.setInt('annualIncome', data['annualIncome']);
+        await prefs.setInt('currentSavings', data['currentSavings']);
+        await prefs.setInt(
+            'totalStockInvestment', data['totalStockInvestment']);
+            
+
+        List<String> groupedStocksJson = [];
+        for (var stock in data['groupedStocks']) {
+          groupedStocksJson.add(json.encode(stock));
+        }
+        await prefs.setStringList('groupedStocks', groupedStocksJson);
+
+        print("Investment data stored successfully.");
+      } else {
+        print("Failed to fetch data: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("Error fetching investment data: $error");
+    }
   }
 }

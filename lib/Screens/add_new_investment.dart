@@ -73,7 +73,7 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
             "name": stock['stockName'],
             "investedAmount": stock['investedAmount'].toString(),
             "numberOfStocks": stock['numberOfStocks'].toString(),
-            "pricePerStock": _calculatedShares.toString()
+            "pricePerStock": stock['calculatedShares'].toString()
           };
         }).toList()
       };

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/router/named_routes.dart';
+import 'package:flutter_finance/services/auth_services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -10,6 +12,22 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
+  String? userName;
+  String? email;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+  Future<void> loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('username') ?? 'Guest';
+      email = prefs.getString('email') ?? 'No email';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -17,8 +35,8 @@ class _SideBarState extends State<SideBar> {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text('Shaikh Asif'),
-            accountEmail: Text('example@gmail.com'),
+            accountName: Text(userName ?? 'Guest'),
+            accountEmail: Text(email ?? 'No email'),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.network(
@@ -40,7 +58,8 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             leading: Icon(Icons.update),
             title: Text('Update Profile'),
-            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.personalInfo),
+            onTap: () =>
+                GoRouter.of(context).pushNamed(UserRoutes.personalInfo),
           ),
           ListTile(
             leading: Icon(Icons.golf_course_sharp),
@@ -54,8 +73,15 @@ class _SideBarState extends State<SideBar> {
           ),
           ListTile(
             leading: Icon(Icons.newspaper),
+            title: Text('News'),
+            onTap: () =>
+                GoRouter.of(context).pushNamed(UserRoutes.newsHomePage),
+          ),
+          ListTile(
+            leading: Icon(Icons.handshake),
             title: Text('Opportunities'),
-            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.newsHomePage),
+            onTap: () =>{}
+                // GoRouter.of(context).pushNamed(UserRoutes.newsHomePage),
           ),
           Divider(),
           ListTile(

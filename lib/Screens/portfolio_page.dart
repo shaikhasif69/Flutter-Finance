@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_finance/components/constant.dart';
 import 'package:flutter_finance/widgets/portfolio_piechart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
@@ -15,10 +18,32 @@ class _PortfolioPageState extends State<PortfolioPage> {
   final DateTime now = DateTime.now();
   late String formattedDate;
 
+  int annualIncome = 0;
+  int currentSavings = 0;
+  int totalStockInvestment = 0;
+  List<Map<String, dynamic>> groupedStocks = [];
+
   @override
   void initState() {
     super.initState();
     formattedDate = DateFormat('MMMM d, y').format(now);
+    fetchPortfolioData(); 
+  }
+
+  Future<void> fetchPortfolioData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      annualIncome = prefs.getInt('annualIncome') ?? 0;
+      currentSavings = prefs.getInt('currentSavings') ?? 0;
+      totalStockInvestment = prefs.getInt('totalStockInvestment') ?? 0;
+      List<String> groupedStocksJson =
+          prefs.getStringList('groupedStocks') ?? [];
+
+      groupedStocks = groupedStocksJson.map((stockJson) {
+        return json.decode(stockJson) as Map<String, dynamic>;
+      }).toList();
+    });
   }
 
   @override
@@ -61,7 +86,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   child: Column(
                     children: [
                       Text("Gross Balance"),
-                      Text("₹135 000",
+                      Text(currentSavings.toString(),
                           style: GoogleFonts.poppins(
                               fontSize: 35,
                               fontWeight: FontWeight.w500,
@@ -148,65 +173,78 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       SizedBox(height: screenHeight * 0.02),
                       Text(formattedDate),
                       SizedBox(height: screenHeight * 0.02),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 20.0, right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.arrow_circle_up, size: 35),
-                                Column(
-                                  children: [Text("Stocks"), Text("TATA")],
+                     ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: groupedStocks.length,
+                            itemBuilder: (context, index) {
+                              print("stock here:!" + groupedStocks[index].toString());
+                              var stock = groupedStocks[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          stock['type'] == 'up'
+                                              ? Icons.arrow_circle_up
+                                              : Icons.arrow_circle_down,
+                                          size: 35,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("Stocks", style: GoogleFonts.poppins(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black
+                                            )),
+                                            Row(
+                                              children: [
+                                                Text(stock['name'] ?? 'Unknown Stock',
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w400,
+                                                        color: Colors.grey)),
+                                                    Text(
+                                      " : ${stock['numberOfStocks'] ?? 0}",
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black),
+                                    ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "₹${stock['investedAmount'] ?? 0}",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black),
+                                        ),
+                                         Text(
+                                          "₹ per stock ${stock['pricePerStock'] ?? 0}",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Text("₹2230")
-                          ],
-                        ),
-                      ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.arrow_circle_down,
-                                  size: 35,
-                                ),
-                                Column(
-                                  children: [Text("Stocks"), Text("RELIANC")],
-                                ),
-                              ],
-                            ),
-                            Text("₹2556")
-                          ],
-                        ),
-                      ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.only(left: 20.0, right: 20, top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.arrow_circle_up,
-                                  size: 35,
-                                ),
-                                Column(
-                                  children: [Text("BONDS"), Text("GOLD")],
-                                ),
-                              ],
-                            ),
-                            Text("₹1675")
-                          ],
-                        ),
-                      ),
+                              );
+                            },
+                          ),
                       SizedBox(height: screenHeight * 0.02),
                       Text(formattedDate),
                       SizedBox(height: screenHeight * 0.02),
@@ -219,7 +257,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
                               children: [
                                 Icon(Icons.arrow_circle_up, size: 35),
                                 Column(
-                                  children: [Text("SALARY"), Text("Software Engineer")],
+                                  children: [
+                                    Text("SALARY"),
+                                    Text("Software Engineer")
+                                  ],
                                 ),
                               ],
                             ),
