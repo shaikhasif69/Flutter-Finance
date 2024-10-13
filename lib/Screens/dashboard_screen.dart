@@ -33,6 +33,8 @@ late SharedPreferences pref=AuthService.pref;
  
   @override
   Widget build(BuildContext context) {
+    print("prefffffffffffffff: " + pref.getString("riskApitite").toString());
+    print(pref.getString("riskApitite").toString() + "prefffffffffffffff");
 
   ref.watch(investmentProvider);
    var data=   ref.read(investmentProvider.notifier).data;
@@ -189,7 +191,7 @@ late SharedPreferences pref=AuthService.pref;
                                 ),
                               ),
                               Text(
-                                "Moderate",
+                                pref.getString("riskApitite") == " " ? "MODERATE" : pref.getString("riskApitite")!,
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 20),
                               )
@@ -234,7 +236,7 @@ late SharedPreferences pref=AuthService.pref;
                 ],
               ),
             ),
-            pref.getString('riskApitite')==""||pref.getString('riskApitite')==null? SizedBox( height: 50, child: ElevatedButton(onPressed: (){GoRouter.of(context).pushNamed(UserRoutes.quiz);
+            pref.getString('riskApitite')==" "||pref.getString('riskApitite')==null? SizedBox( height: 50, child: ElevatedButton(onPressed: (){GoRouter.of(context).pushNamed(UserRoutes.quiz);
 
             }, child: Text("quetionannry"))) : SizedBox(height: 250,
               child: data!=null && data.isNotEmpty? ListView.builder( scrollDirection: Axis.horizontal,

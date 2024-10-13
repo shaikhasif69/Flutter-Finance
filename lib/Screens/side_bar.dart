@@ -68,8 +68,8 @@ class _SideBarState extends State<SideBar> {
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Financial Advice'),
-            onTap: () => null,
+            title: Text('Financial Quizee'),
+            onTap: () => GoRouter.of(context).pushNamed(UserRoutes.quiz),
           ),
           ListTile(
             leading: Icon(Icons.newspaper),
@@ -98,7 +98,10 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             title: Text('Exit'),
             leading: Icon(Icons.exit_to_app),
-            onTap: () => null,
+            onTap: () {
+               AuthService.pref.clear();
+               GoRouter.of(context).pushReplacement(CommonRoutes.splashScreen);
+            },
           ),
         ],
       ),

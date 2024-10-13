@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _saveProfile() async {
     try {
-      String apiUrl = 'http://192.168.137.124:3000/users/editProfile';
+      String apiUrl = 'https://vh-24-byte-fuse.vercel.app/users/editProfile';
       SharedPreferences prefs = await SharedPreferences.getInstance();
       FormData formData = FormData.fromMap({
         "username": _usernameController.text,

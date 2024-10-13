@@ -56,7 +56,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
     String? authToken = prefs.getString('authToken');
 
     final response = await http.get(
-      Uri.parse('http://192.168.137.124:3000/users/news'),
+      Uri.parse('https://vh-24-byte-fuse.vercel.app/users/news'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $authToken',

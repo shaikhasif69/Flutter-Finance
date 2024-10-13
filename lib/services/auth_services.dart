@@ -25,7 +25,7 @@ class AuthService {
       var tpassword = password.trim();
 
       final response = await http.post(
-        Uri.parse('$baseUrl/signup'),
+        Uri.parse('$versal/signup'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -114,7 +114,7 @@ class AuthService {
     var tpassword = password.trim();
 
     final response = await http.post(
-      Uri.parse('$baseUrl/signin'),
+      Uri.parse('$versal/signin'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -202,7 +202,7 @@ class AuthService {
       }
 
       final response = await http.put(
-        Uri.parse('$baseUrl/users/edit-profile'),
+        Uri.parse('$versal/users/edit-profile'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authToken',
@@ -247,7 +247,7 @@ class AuthService {
 
     ;
     String? authToken = prefs.getString('authToken');
-    var res = await http.post(Uri.parse(baseUrl + "/submit-risk"),
+    var res = await http.post(Uri.parse(versal + "/submit-risk"),
         body: jsonEncode(d),
         headers: {
           'Content-Type': 'application/json',
@@ -273,16 +273,22 @@ class AuthService {
       var authToken = await prefs.getString('authToken');
       var res = await http.post(Uri.parse(django), body: "Bearer $authToken");
       if (res.statusCode == 200) {
+        var data = jsonDecode(res.body)['data'];
         print(res.body);
+        return data;
       } else {
         print(res.body);
+        return [];
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
   }
 
   Future<List<NewsModels2>> fetchTrendingNews() async {
     final response = await http
-        .get(Uri.parse('http://192.168.137.124:3000/users/trending-news'));
+        .get(Uri.parse('$versal/trending-news'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -294,7 +300,7 @@ class AuthService {
 
   Future<ipoModels> fetchIpoData() async {
     final response =
-        await http.get(Uri.parse('http://192.168.137.124:3000/users/ipo'));
+        await http.get(Uri.parse('$versal/users/ipo'));
 
     if (response.statusCode == 200) {
       return ipoModels.fromJson(json.decode(response.body));
@@ -304,7 +310,7 @@ class AuthService {
   }
 
   Future<void> fetchAndStoreInvestmentData() async {
-    final url = 'http://192.168.137.124:3000/users/getUserInvestment';
+    final url = '$versal/getUserInvestment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
       String? authToken = prefs.getString('authToken');
     try {

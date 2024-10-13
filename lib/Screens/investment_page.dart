@@ -50,7 +50,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
   }
 
   Future<void> fetchAndStoreInvestmentData() async {
-    final url = 'http://192.168.137.124:3000/users/getUserInvestment';
+    final url = 'https://vh-24-byte-fuse.vercel.app/users/getUserInvestment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? authToken = prefs.getString('authToken');
     print("hellllllllllllooooooo");

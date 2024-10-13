@@ -79,7 +79,7 @@ class _AddNewInvestmentState extends State<AddNewInvestment> {
       };
 
       final response = await http.post(
-        Uri.parse('http://192.168.137.124:3000/users/invest'),
+        Uri.parse('https://vh-24-byte-fuse.vercel.app/users/invest'),
         headers: {
           'Content-Type': 'application/json',
           "Authorization": "Bearer $authToken"
